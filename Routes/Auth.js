@@ -10,7 +10,7 @@ dotenv.config(); // Load environment variables from .env file
 // User registration
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, name } = req.body;
+    const { username, password, name, dateOfBirth } = req.body;
     
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword, name });
+    const user = new User({ username, password: hashedPassword, name, dateOfBirth });
     await user.save();
     
     res.status(201).json({ message: 'User registered successfully' });
