@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
     res.status(200).json({ token, username: user.username, name: user.name ,dateOfBirth:user.dateOfBirth}); 
     await user.save();
     
-    res.status(200).json({ token });
+ 
   } catch (error) {
     res.status(500).json({ error: 'Authentication failed' });
   }
