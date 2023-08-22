@@ -2,7 +2,19 @@ const express = require('express');
 const Tweet = require('../Models/Tweet.model');
 const authMiddleware = require('../Middleware/auth');
 const router = express.Router();
+const multer = require("multer");
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Specify the directory where uploaded files will be saved
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Generate a unique filename
+  },
+});
+
+const upload = multer({ storage });
 // Create a new tweet
 // router.post('/createTweet', authMiddleware, async (req, res) => {
 //   try {
@@ -15,9 +27,10 @@ const router = express.Router();
 //     res.status(500).json({ error: 'Tweet creation failed' });
 //   }
 // });
-router.post('/createTweet', authMiddleware, async (req, res) => {
+router.post('/createTweet', authMiddleware,upload.array('images', 4), async (req, res) => {
   try {
-    const { content, images } = req.body;
+    const { content } = req.body;
+    const images = req.files.map(file => file.filename);
     const newTweet = new Tweet({ author: req.user._id, content, images });
     await newTweet.save();
     res.status(201).json(newTweet);
