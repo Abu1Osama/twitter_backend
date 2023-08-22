@@ -40,8 +40,17 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Authentication failed' });
     }
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const userResponse = {
+      token,
+      username: user.username,
+      name: user.name,
+      dateOfBirth: user.dateOfBirth,
+      userId: user._id,
+      followers: user.followers,
+    };
+    res.status(200).json(userResponse);
 
-    res.status(200).json({ token, username: user.username, name: user.name ,dateOfBirth:user.dateOfBirth,userId: user._id }); 
+    // res.status(200).json({ token, username: user.username, name: user.name ,dateOfBirth:user.dateOfBirth,userId: user._id }); 
     await user.save();
     
  
