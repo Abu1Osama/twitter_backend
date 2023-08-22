@@ -50,7 +50,6 @@ router.post('/login', async (req, res) => {
     };
     res.status(200).json(userResponse);
 
-    // res.status(200).json({ token, username: user.username, name: user.name ,dateOfBirth:user.dateOfBirth,userId: user._id }); 
     await user.save();
     
  
