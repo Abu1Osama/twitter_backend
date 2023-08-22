@@ -6,15 +6,15 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); 
+    cb(null, "uploads"); 
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // Generate a unique filename
+   
+    cb(null,Date.now() + '-'+ file.originalname); // Generate a unique filename
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage:storage });
 // Create a new tweet
 // router.post('/createTweet', authMiddleware, async (req, res) => {
 //   try {
@@ -27,11 +27,11 @@ const upload = multer({ storage });
 //     res.status(500).json({ error: 'Tweet creation failed' });
 //   }
 // });
-router.post('/createTweet', authMiddleware,upload.array('images', 4), async (req, res) => {
+router.post('/createTweet', authMiddleware,upload.single('image'), async (req, res) => {
   try {
     const { content } = req.body;
-    const images = req.files.map(file => file.filename);
-    const newTweet = new Tweet({ author: req.user._id, content, images });
+    const image = req.file ? req.file.filename : null;
+    const newTweet = new Tweet({ author: req.user._id, content, image });
     await newTweet.save();
     res.status(201).json(newTweet);
   } catch (error) {

@@ -20,18 +20,17 @@ app.use(cors({
 }));
 
 
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Specify the directory where uploaded files will be saved
+    cb(null, "uploads"); 
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // Generate a unique filename
+   
+    cb(null,Date.now() + '-'+ file.originalname); // Generate a unique filename
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage:storage });
 
 // Use the upload middleware for handling image uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
