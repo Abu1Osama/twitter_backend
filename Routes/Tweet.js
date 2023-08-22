@@ -4,14 +4,25 @@ const authMiddleware = require('../Middleware/auth');
 const router = express.Router();
 
 // Create a new tweet
+// router.post('/createTweet', authMiddleware, async (req, res) => {
+//   try {
+//     const { content } = req.body;
+//     const newTweet = new Tweet({ author: req.user._id, content });
+//     await newTweet.save();
+//     res.status(201).json(newTweet);
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).json({ error: 'Tweet creation failed' });
+//   }
+// });
 router.post('/createTweet', authMiddleware, async (req, res) => {
   try {
-    const { content } = req.body;
-    const newTweet = new Tweet({ author: req.user._id, content });
+    const { content, images } = req.body;
+    const newTweet = new Tweet({ author: req.user._id, content, images });
     await newTweet.save();
     res.status(201).json(newTweet);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: 'Tweet creation failed' });
   }
 });
