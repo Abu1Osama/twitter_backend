@@ -15,7 +15,14 @@ router.post('/createTweet', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Tweet creation failed' });
   }
 });
-
+router.get('/userTweets', authMiddleware, async (req, res) => {
+  try {
+    const userTweets = await Tweet.find({ author: req.user._id });
+    res.json(userTweets);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve user tweets' });
+  }
+});
 // Get a specific tweet
 router.get('/:tweetId', authMiddleware, async (req, res) => {
   try {
