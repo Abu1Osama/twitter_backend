@@ -13,7 +13,13 @@ dotenv.config();
 connectDB();
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [ 'http://localhost:3000'];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
