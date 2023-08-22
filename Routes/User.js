@@ -1,8 +1,9 @@
 const express = require('express');
 const User= require('../Models/User.model');
+const authMiddleware = require('../Middleware/auth');
 const router = express.Router();
 
-router.post('/followUser/:userId', async (req, res) => {
+router.post('/followUser/:userId',authMiddleware, async (req, res) => {
   try {
     const userIdToFollow = req.params.userId;
     
@@ -18,11 +19,12 @@ router.post('/followUser/:userId', async (req, res) => {
     
     res.json({ message: 'Successfully followed user' });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Failed to follow user' });
   }
 });
 
-router.post('/unfollowUser/:userId', async (req, res) => {
+router.post('/unfollowUser/:userId', authMiddleware,async (req, res) => {
   try {
     const userIdToUnfollow = req.params.userId;
     
