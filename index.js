@@ -13,11 +13,12 @@ dotenv.config();
 connectDB();
 
 app.use(express.json());
-const allowedOrigins = [ 'http://localhost:3000'];
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+const corsOptions = {
+  origin: 'http://localhost:3000', // Allow requests from this origin
+  credentials: true, // If you're using cookies or authentication
+};
+
+app.use(cors(corsOptions));
 
 
 
