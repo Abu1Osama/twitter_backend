@@ -6,7 +6,7 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Specify the directory where uploaded files will be saved
+    cb(null, "uploads/"); 
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);

@@ -1,5 +1,4 @@
 const express = require("express");
-const multer = require("multer");
 const app = express();
 const connectDB = require("./Control/db");
 const dotenv = require("dotenv");
@@ -8,17 +7,13 @@ const authRoutes = require('./Routes/Auth');
 const tweetRoutes = require('./Routes/Tweet');
 const userRoutes = require('./Routes/User');
 const timelineRoutes = require('./Routes/Timeline');
+const multer = require("multer");
 const path = require("path");
 dotenv.config();
 connectDB();
 
 app.use(express.json());
-const corsOptions = {
-  origin: 'http://localhost:3000', // Allow requests from this origin
-  credentials: true, // If you're using cookies or authentication
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 
 
