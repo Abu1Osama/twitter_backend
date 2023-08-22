@@ -5,7 +5,7 @@ const Tweet = require('../Models/Tweet.model');
 
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const followedUserIds = req.user.following;
+    const followedUserIds = req.user.followers;
 
     const timelineTweets = await Tweet.find({ author: { $in: followedUserIds } })
       .sort({ createdAt: -1 }) 
