@@ -3,7 +3,7 @@ const User= require('../Models/User.model');
 const authMiddleware = require('../Middleware/auth');
 const router = express.Router();
 
-router.post('/followUser/:userId', async (req, res) => {
+router.post('/followUser/:userId',authMiddleware, async (req, res) => {
   try {
     const userIdToFollow = req.params.userId;
 
