@@ -3,12 +3,23 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../Models/User.model');
 const router = express.Router();
+const multer = require('multer'); // Import multer
 const dotenv = require('dotenv');
 
 dotenv.config(); // Load environment variables from .env file
 
 // User registration
-router.post('/register', async (req, res) => {
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'avatars'); // Set the destination directory for avatars
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname); // Generate a unique filename
+  },
+});
+
+const uploadAvatar = multer({ storage: avatarStorage });
+router.post('/register', uploadAvatar.single('avatar'), async (req, res) => {
   try {
     const { username, password, name, dateOfBirth } = req.body;
     
@@ -18,7 +29,8 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword, name, dateOfBirth });
+    const avatar = req.file ? req.file.filename : null;
+    const user = new User({ username, password: hashedPassword, name, dateOfBirth,avatar, });
     await user.save();
     
     res.status(201).json({ message: 'User registered successfully' });
@@ -47,6 +59,7 @@ router.post('/login', async (req, res) => {
       dateOfBirth: user.dateOfBirth,
       userId: user._id,
       followers: user.followers,
+      avatar: user.avatar
     };
     res.status(200).json(userResponse);
 
