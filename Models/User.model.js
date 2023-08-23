@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   name:{ type: String, unique: true, required: true },
   tokens: [{ type: String }],
   dateOfBirth: { type: String }, 
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -16,6 +16,9 @@ const avatarStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname); // Generate a unique filename
   },
+  limits: {
+    fileSize: 1024 * 1024, // 1MB (adjust as needed)
+  },
 });
 
 const uploadAvatar = multer({ storage: avatarStorage });
@@ -29,12 +32,17 @@ router.post('/register', uploadAvatar.single('avatar'), async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+   
     const avatar = req.file ? req.file.filename : null;
+    if (!avatar) {
+      return res.status(400).json({ error: 'Avatar upload failed' });
+    }
     const user = new User({ username, password: hashedPassword, name, dateOfBirth,avatar, });
     await user.save();
     
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Registration failed' });
   }
 });
