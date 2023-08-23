@@ -25,7 +25,7 @@ router.post('/followUser/:userId', async (req, res) => {
     res.json({ message: 'Successfully followed user' });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Failed to follow user' });
+    res.status(500).json({ error: 'Failed to follow user' ,error});
   }
 });
 
