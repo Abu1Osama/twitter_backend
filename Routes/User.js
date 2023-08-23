@@ -3,23 +3,28 @@ const User= require('../Models/User.model');
 const authMiddleware = require('../Middleware/auth');
 const router = express.Router();
 
-router.post('/followUser/:userId',authMiddleware, async (req, res) => {
+router.post('/followUser/:userId', async (req, res) => {
   try {
     const userIdToFollow = req.params.userId;
-    
+
     // Check if the user to follow exists
     const userToFollow = await User.findById(userIdToFollow);
     if (!userToFollow) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
+    // Check if the authenticated user is already following the user
+    if (req.user.followers.includes(userIdToFollow)) {
+      return res.status(400).json({ error: 'Already following this user' });
+    }
+
     // Update the authenticated user's followers list
     req.user.followers.push(userIdToFollow);
     await req.user.save();
-    
+
     res.json({ message: 'Successfully followed user' });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: 'Failed to follow user' });
   }
 });
