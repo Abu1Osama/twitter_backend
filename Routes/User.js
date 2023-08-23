@@ -49,5 +49,13 @@ router.get('/getUser/:userId', async (req, res) => {
     res.status(500).json({ error: 'User retrieval failed' });
   }
 });
+router.get('/getAllUsers', async (req, res) => {
+  try {
+    const allUsers = await User.find();
+    res.json(allUsers);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get users' });
+  }
+});
 
 module.exports = router;
