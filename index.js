@@ -23,7 +23,7 @@ app.use(
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads");
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
@@ -34,7 +34,7 @@ const upload = multer({ storage: storage });
 
 const avatarStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "avatars"); // Set the destination directory for avatars
+    cb(null, "avatars/"); // Set the destination directory for avatars
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
@@ -44,8 +44,8 @@ const avatarStorage = multer.diskStorage({
 const uploadAvatar = multer({ storage: avatarStorage });
 
 // Use the upload middleware for handling image uploads
-app.use("/avatars", express.static(path.join(__dirname, "avatars")));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/avatars", express.static(path.join(__dirname, "avatars/")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads/")));
 app.use("/auth", authRoutes);
 app.use("/tweets", tweetRoutes);
 app.use("/users", userRoutes);
