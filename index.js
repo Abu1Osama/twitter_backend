@@ -26,7 +26,14 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
   },
 });
 
@@ -38,6 +45,13 @@ const avatarStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
   },
 });
 

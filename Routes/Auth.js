@@ -19,6 +19,17 @@ const avatarStorage = multer.diskStorage({
   limits: {
     fileSize: 1024 * 1024, // 1MB (adjust as needed)
   },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/png" ||
+      file.mimetype === "image/gif"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
+  },
 });
 
 const uploadAvatar = multer({ storage: avatarStorage });
