@@ -154,9 +154,18 @@ router.post("/edit-profile", async (req, res) => {
 
     res.status(200).json({ message: "Profile updated successfully" });
   } catch (error) {
+    console.error("Edit Profile Error:", error);
+
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      for (field in error.errors) {
+        validationErrors[field] = error.errors[field].message;
+      }
+      return res.status(400).json({ errors: validationErrors });
+    }
+
     res.status(500).json({ error: "Profile update failed" });
   }
 });
-
 
 module.exports = router;
