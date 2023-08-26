@@ -60,7 +60,7 @@ router.get("/getAllUsers", async (req, res) => {
     res.status(500).json({ error: "Failed to get users" });
   }
 });
-router.put("/editUser/:userId", authMiddleware, async (req, res) => {
+router.patch("/editUser/:userId", authMiddleware, async (req, res) => {
   try {
     const userIdToUpdate = req.params.userId;
 
