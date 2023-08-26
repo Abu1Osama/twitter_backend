@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String }, 
   name:{ type: String, unique: true, required: true },
   tokens: [{ type: String }],
-  dateOfBirth: { type: Date }, 
+  dateOfBirth: { type: String }, 
   createdAt: { type: Date, default: Date.now }
 });
 
