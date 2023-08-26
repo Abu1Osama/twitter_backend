@@ -105,4 +105,58 @@ router.post("/logout", async (req, res) => {
   }
 });
 
+router.post("/change-password", async (req, res) => {
+  try {
+    const { userId, currentPassword, newPassword } = req.body;
+
+    // Find the user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the current password is valid
+    const validPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ error: "Invalid current password" });
+    }
+
+    // Hash the new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    user.password = hashedNewPassword;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Password change failed" });
+  }
+});
+
+router.post("/edit-profile", async (req, res) => {
+  try {
+    const { userId, name, dateOfBirth, avatar } = req.body;
+
+    // Find the user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update the user's profile information
+    user.name = name;
+    user.dateOfBirth = dateOfBirth;
+    user.avatar = avatar; // Assuming the client sends the updated avatar URL
+
+    await user.save();
+
+    res.status(200).json({ message: "Profile updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Profile update failed" });
+  }
+});
+
+
 module.exports = router;
