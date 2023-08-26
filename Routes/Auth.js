@@ -135,37 +135,5 @@ router.post("/change-password", async (req, res) => {
   }
 });
 
-router.post("/edit-profile", async (req, res) => {
-  try {
-    const { userId, name, dateOfBirth, avatar } = req.body;
-
-    // Find the user by userId
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Update the user's profile information
-    user.name = name;
-    user.dateOfBirth = dateOfBirth;
-    user.avatar = avatar; // Assuming the client sends the updated avatar URL
-
-    await user.save();
-
-    res.status(200).json({ message: "Profile updated successfully" });
-  } catch (error) {
-    console.error("Edit Profile Error:", error);
-
-    if (error.name === "ValidationError") {
-      const validationErrors = {};
-      for (field in error.errors) {
-        validationErrors[field] = error.errors[field].message;
-      }
-      return res.status(400).json({ errors: validationErrors });
-    }
-
-    res.status(500).json({ error: "Profile update failed" });
-  }
-});
 
 module.exports = router;

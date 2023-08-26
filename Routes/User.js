@@ -60,5 +60,29 @@ router.get("/getAllUsers", async (req, res) => {
     res.status(500).json({ error: "Failed to get users" });
   }
 });
+router.put("/editUser/:userId", authMiddleware, async (req, res) => {
+  try {
+    const userIdToUpdate = req.params.userId;
+
+    if (req.user._id.toString() !== userIdToUpdate) {
+      return res.status(403).json({ error: "You are not authorized to edit this user" });
+    }
+
+    const updates = req.body; 
+
+    const user = await User.findByIdAndUpdate(userIdToUpdate, updates, {
+      new: true, 
+      runValidators: true, 
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update user" });
+  }
+});
 
 module.exports = router;
