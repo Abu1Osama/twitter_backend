@@ -6,7 +6,7 @@ const multer = require("multer");
 
 const tweetimage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "avatars/"); // Set the destination directory for avatars
+    cb(null, "uploads/"); // Set the destination directory for avatars
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
