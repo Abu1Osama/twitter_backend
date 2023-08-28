@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname.split('.').pop()); 
+    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname); 
   },
   fileFilter: (req, file, cb) => {
     if (
