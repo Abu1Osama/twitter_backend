@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname.split('.').pop());
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
@@ -59,7 +59,13 @@ const uploadAvatar = multer({ storage: avatarStorage });
 
 // Use the upload middleware for handling image uploads
 app.use("/avatars", express.static(path.join(__dirname, "avatars/")));
+
+
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads/")));
+
+
+
 app.use("/auth", authRoutes);
 app.use("/tweets", tweetRoutes);
 app.use("/users", userRoutes);

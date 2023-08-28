@@ -3,13 +3,14 @@ const Tweet = require("../Models/Tweet.model");
 const authMiddleware = require("../Middleware/auth");
 const router = express.Router();
 const multer = require("multer");
+const crypto = require('crypto'); 
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); 
+    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname.split('.').pop()); 
   },
   fileFilter: (req, file, cb) => {
     if (
