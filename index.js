@@ -21,12 +21,12 @@ app.use(
   })
 );
 
-const storage = multer.diskStorage({
+const tweetimage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, "avatars/"); // Set the destination directory for avatars
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); 
+    cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
@@ -37,7 +37,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: tweetimage });
 
 const avatarStorage = multer.diskStorage({
   destination: (req, file, cb) => {

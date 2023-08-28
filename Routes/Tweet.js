@@ -4,13 +4,14 @@ const authMiddleware = require("../Middleware/auth");
 const router = express.Router();
 const multer = require("multer");
 
-const storage = multer.diskStorage({
+const tweetimage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, "avatars/"); // Set the destination directory for avatars
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); 
+    cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
   },
+ 
   fileFilter: (req, file, cb) => {
     if (
       file.mimetype === "image/jpeg" ||
@@ -24,19 +25,8 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
-// Create a new tweet
-// router.post('/createTweet', authMiddleware, async (req, res) => {
-//   try {
-//     const { content } = req.body;
-//     const newTweet = new Tweet({ author: req.user._id, content });
-//     await newTweet.save();
-//     res.status(201).json(newTweet);
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).json({ error: 'Tweet creation failed' });
-//   }
-// });
+const upload = multer({ storage: tweetimage });
+
 router.post(
   "/createTweet",
   authMiddleware,
