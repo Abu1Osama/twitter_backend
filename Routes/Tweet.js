@@ -34,47 +34,16 @@ router.post(
   async (req, res) => {
     try {
       const { content } = req.body;
-
-      if (!content) {
-        return res.status(400).json({ error: "Content is required" });
-      }
-
-      if (!req.file) {
-        return res.status(400).json({ error: "Image is required" });
-      }
-
-      if (
-        req.file.mimetype !== "image/jpeg" &&
-        req.file.mimetype !== "image/png" &&
-        req.file.mimetype !== "image/gif"
-      ) {
-        return res.status(400).json({ error: "Unsupported file format" });
-      }
-
-      const newTweet = new Tweet({
-        author: req.user._id,
-        content,
-        image: req.file.filename,
-      });
-
+      const image = req.file ? req.file.filename : null;
+      const newTweet = new Tweet({ author: req.user._id, content, image });
       await newTweet.save();
       res.status(201).json(newTweet);
     } catch (error) {
       console.log(error);
-
-      if (error.message === "Content is required") {
-        res.status(400).json({ error: "Content is required" });
-      } else if (error.message === "Image is required") {
-        res.status(400).json({ error: "Image is required" });
-      } else if (error.message === "Unsupported file format") {
-        res.status(400).json({ error: "Unsupported file format" });
-      } else {
-        res.status(500).json({ error: "Tweet creation failed" });
-      }
+      res.status(500).json({ error: "Tweet creation failed" });
     }
   }
 );
-
 router.get("/allTweetsWithProfiles", authMiddleware, async (req, res) => {
   try {
     const allTweets = await Tweet.find().populate("author", "username name");
