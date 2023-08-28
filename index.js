@@ -28,15 +28,15 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname);
+    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname.split('.').pop());
   },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-      cb(null, true);
-    } else {
-      cb(new Error("Unsupported file format"));
-    }
-  },
+  // fileFilter: (req, file, cb) => {
+  //   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+  //     cb(null, true);
+  //   } else {
+  //     cb(new Error("Unsupported file format"));
+  //   }
+  // },
 });
 
 const upload = multer({ storage: storage });
