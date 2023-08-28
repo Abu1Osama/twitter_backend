@@ -3,26 +3,25 @@ const Tweet = require("../Models/Tweet.model");
 const authMiddleware = require("../Middleware/auth");
 const router = express.Router();
 const multer = require("multer");
-const crypto = require('crypto'); 
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname.split('.').pop()); 
+    cb(null, Date.now() + "-" + file.originalname); 
   },
-  // fileFilter: (req, file, cb) => {
-  //   if (
-  //     file.mimetype === "image/jpeg" ||
-  //     file.mimetype === "image/png" ||
-  //     file.mimetype === "image/gif"
-  //   ) {
-  //     cb(null, true);
-  //   } else {
-  //     cb(new Error("Unsupported file format"));
-  //   }
-  // },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/png" ||
+      file.mimetype === "image/gif"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
+  },
 });
 
 const upload = multer({ storage: storage });

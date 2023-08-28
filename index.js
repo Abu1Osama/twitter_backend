@@ -1,6 +1,5 @@
 const express = require("express");
 const multer = require("multer");
-const crypto = require('crypto'); 
 const app = express();
 const connectDB = require("./Control/db");
 const dotenv = require("dotenv");
@@ -10,7 +9,6 @@ const tweetRoutes = require("./Routes/Tweet");
 const userRoutes = require("./Routes/User");
 const timelineRoutes = require("./Routes/Timeline");
 const path = require("path");
-
 dotenv.config();
 connectDB();
 
@@ -28,15 +26,15 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, crypto.randomBytes(16).toString('hex') + '.' + file.originalname.split('.').pop());
+    cb(null, Date.now() + "-" + file.originalname);
   },
-  // fileFilter: (req, file, cb) => {
-  //   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-  //     cb(null, true);
-  //   } else {
-  //     cb(new Error("Unsupported file format"));
-  //   }
-  // },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
+  },
 });
 
 const upload = multer({ storage: storage });
@@ -61,13 +59,7 @@ const uploadAvatar = multer({ storage: avatarStorage });
 
 // Use the upload middleware for handling image uploads
 app.use("/avatars", express.static(path.join(__dirname, "avatars/")));
-
-
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads/")));
-
-
-
 app.use("/auth", authRoutes);
 app.use("/tweets", tweetRoutes);
 app.use("/users", userRoutes);
