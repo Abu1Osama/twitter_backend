@@ -13,7 +13,7 @@ dotenv.config();
 connectDB();
 
 app.use(express.json());
-const allowedOrigins = ["http://localhost:3000","https://twitterclone-abu1osama.vercel.app/"];
+const allowedOrigins = ["http://localhost:3000","https://twitterclone-abu1osama.vercel.app"];
 app.use(
   cors({
     origin: allowedOrigins,
