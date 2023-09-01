@@ -101,23 +101,23 @@ router.post("/register", uploadAvatar.single("avatar"), async (req, res) => {
     const { username, password, name, dateOfBirth } = req.body;
 
     if (!username.includes("@")) {
-      return res.status(400).json({ error: "Username must contain the '@' symbol" });
+      return res.status(400).send({ msg: "Username must contain the '@' symbol" });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ error: "Password must be 6 characters or longer" });
+      return res.status(400).send({ msg: "Password must be 6 characters or longer" });
     }
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
+      return res.status(400).send({ msg: "Username already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const avatar = req.file ? req.file.filename : null;
     if (!avatar) {
-      return res.status(400).json({ error: "Avatar upload failed" });
+      return res.status(400).send({ msg: "Avatar upload failed" });
     }
     const user = new User({
       username,
@@ -128,10 +128,10 @@ router.post("/register", uploadAvatar.single("avatar"), async (req, res) => {
     });
     await user.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).send({ msg: "User registered successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Registration failed" });
+    res.status(500).send({msg: error.message });
   }
 });
 
@@ -142,13 +142,13 @@ router.post("/login", async (req, res) => {
 
     if (!user) {
       // User not found (Invalid Username)
-      return res.status(401).json({ error: "User not found" });
+      return res.status(401).send({ msg: "User not found" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       // Incorrect Password
-      return res.status(401).json({ error: "Incorrect password" });
+      return res.status(401).send({ msg: "Incorrect password" });
     }
 
     // Authentication successful, generate and return token
@@ -169,7 +169,7 @@ router.post("/login", async (req, res) => {
     await user.save(); // Note: You might not need this line in the login route.
   } catch (error) {
     // Generic server error (for unexpected errors)
-    res.status(500).json({ error: "Authentication failed" });
+    res.status(500).send({msg: error.message});
   }
 });
 
@@ -177,9 +177,9 @@ router.post("/logout", async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => token !== req.token);
     await req.user.save();
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).send({ msg: "Logged out successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Logout failed" });
+    res.status(500).send({ msg: "Logout failed" });
   }
 });
 
@@ -190,13 +190,13 @@ router.post("/change-password", async (req, res) => {
     // Find the user by userId
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).send({ msg: "User not found" });
     }
 
     // Check if the current password is valid
     const validPassword = await bcrypt.compare(currentPassword, user.password);
     if (!validPassword) {
-      return res.status(401).json({ error: "Invalid current password" });
+      return res.status(401).send({ msg: "Invalid current password" });
     }
 
     // Hash the new password
@@ -207,9 +207,9 @@ router.post("/change-password", async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ message: "Password changed successfully" });
+    res.status(200).send({ msg: "Password changed successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Password change failed" });
+    res.status(500).send({ msg: error.message });
   }
 });
 
