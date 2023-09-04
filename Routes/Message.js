@@ -11,7 +11,7 @@ router.post("/send", async (req, res) => {
     res.status(201).json(newMessage);
   } catch (error) {
     console.error("Error sending message:", error);
-    res.status(500).json({ error: "Failed to send message" });
+    res.status(500).send({msg: error.message });
   }
 });
 
@@ -25,7 +25,7 @@ router.get("/user/:userId", async (req, res) => {
     res.json(messages);
   } catch (error) {
     console.error("Error retrieving messages:", error);
-    res.status(500).json({ error: "Failed to retrieve messages" });
+    res.status(500).send({msg: error.message });
   }
 });
 
