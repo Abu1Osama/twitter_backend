@@ -1,8 +1,10 @@
 const express = require("express");
 const multer = require("multer");
-const app = express();
 const http = require("http");
 const socketIo = require("socket.io");
+const mongoose = require("mongoose");
+const Message = require("./Models/Message.model");
+const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 const connectDB = require("./Control/db");
@@ -64,6 +66,8 @@ const avatarStorage = multer.diskStorage({
 });
 
 const uploadAvatar = multer({ storage: avatarStorage });
+
+// Handle WebSocket connections
 io.on("connection", (socket) => {
   console.log("A user connected");
 
@@ -71,13 +75,19 @@ io.on("connection", (socket) => {
     console.log("A user disconnected");
   });
 
-  // Example: Real-time chat messaging
-  socket.on("chatMessage", (message) => {
-    // Broadcast the message to all connected clients (including the sender)
-    io.emit("chatMessage", message);
+  // Handle chat messages
+  socket.on("chatMessage", async (message) => {
+    try {
+      // Save the message to the database
+      const savedMessage = await Message.create(message);
+
+      // Broadcast the message to all connected clients (including the sender)
+      io.emit("chatMessage", savedMessage);
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
   });
 });
-
 
 // Use the upload middleware for handling image uploads
 app.use("/avatars", express.static(path.join(__dirname, "avatars/")));
@@ -89,6 +99,6 @@ app.use("/timeline", timelineRoutes);
 app.use("/messages", messageRoutes);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
