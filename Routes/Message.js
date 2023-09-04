@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Message = require("../Models/Message.model");
+const authMiddleware = require("../Middleware/auth");
 
 // Route to send a message
-router.post("/send", async (req, res) => {
+router.post("/send",authMiddleware, async (req, res) => {
   try {
     const { sender, recipient, content } = req.body;
     const newMessage = new Message({ sender, recipient, content });
@@ -16,7 +17,7 @@ router.post("/send", async (req, res) => {
 });
 
 // Route to retrieve messages for a user
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:userId",authMiddleware, async (req, res) => {
   try {
     const userId = req.params.userId;
     const messages = await Message.find({
