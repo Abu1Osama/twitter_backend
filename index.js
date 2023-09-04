@@ -1,12 +1,17 @@
 const express = require("express");
 const multer = require("multer");
 const app = express();
+const http = require("http");
+const socketIo = require("socket.io");
+const server = http.createServer(app);
+const io = socketIo(server);
 const connectDB = require("./Control/db");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./Routes/Auth");
 const tweetRoutes = require("./Routes/Tweet");
 const userRoutes = require("./Routes/User");
+const messageRoutes = require("./Routes/Message");
 const timelineRoutes = require("./Routes/Timeline");
 const path = require("path");
 dotenv.config();
@@ -59,6 +64,20 @@ const avatarStorage = multer.diskStorage({
 });
 
 const uploadAvatar = multer({ storage: avatarStorage });
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+
+  // Example: Real-time chat messaging
+  socket.on("chatMessage", (message) => {
+    // Broadcast the message to all connected clients (including the sender)
+    io.emit("chatMessage", message);
+  });
+});
+
 
 // Use the upload middleware for handling image uploads
 app.use("/avatars", express.static(path.join(__dirname, "avatars/")));
@@ -67,6 +86,7 @@ app.use("/auth", authRoutes);
 app.use("/tweets", tweetRoutes);
 app.use("/users", userRoutes);
 app.use("/timeline", timelineRoutes);
+app.use("/messages", messageRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
