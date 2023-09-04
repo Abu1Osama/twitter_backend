@@ -20,7 +20,7 @@ connectDB();
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://twitterclone-abu1osama.vercel.app",
+  "https://twitterclone-abu1osama.vercel.app",
 ];
 app.use(
   cors({
