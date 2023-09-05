@@ -6,10 +6,10 @@ const mongoose = require("mongoose");
 const Message = require("./Models/Message.model");
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server); // Attach socket.io to the HTTP server
+const io = socketIo(server); 
 const connectDB = require("./Control/db");
 const dotenv = require("dotenv");
-const cors = require("cors"); // Import the cors middleware
+const cors = require("cors"); 
 const authRoutes = require("./Routes/Auth");
 const tweetRoutes = require("./Routes/Tweet");
 const userRoutes = require("./Routes/User");
@@ -21,22 +21,18 @@ connectDB();
 
 app.use(express.json());
 
-// Configure CORS for your Express app
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://twitterclone-abu1osama.vercel.app",
-];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    "https://twitterclone-abu1osama.vercel.app",
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, 
+};
 
-// Rest of your middleware and routes...
+app.use(cors(corsOptions));
 
-// Handle WebSocket connections
 io.on("connection", (socket) => {
   console.log("A user connected");
 
