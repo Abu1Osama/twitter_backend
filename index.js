@@ -6,8 +6,17 @@ const socketIo = require("socket.io");
 const mongoose = require("mongoose");
 const Message = require("./Models/Message.model");
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+const httpServer = require("http").createServer(app);
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "https://twitterclone-abu1osama.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 const connectDB = require("./Control/db");
 const dotenv = require("dotenv");
 const authRoutes = require("./Routes/Auth");
@@ -97,6 +106,6 @@ app.use("/timeline", timelineRoutes);
 app.use("/messages", messageRoutes);
 
 const port = process.env.PORT || 3000;
-server.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
