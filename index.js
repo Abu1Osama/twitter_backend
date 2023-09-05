@@ -1,15 +1,15 @@
 const express = require("express");
 const multer = require("multer");
+const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
 const mongoose = require("mongoose");
 const Message = require("./Models/Message.model");
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server); 
+const io = socketIo(server);
 const connectDB = require("./Control/db");
 const dotenv = require("dotenv");
-const cors = require("cors"); 
 const authRoutes = require("./Routes/Auth");
 const tweetRoutes = require("./Routes/Tweet");
 const userRoutes = require("./Routes/User");
@@ -20,19 +20,55 @@ dotenv.config();
 connectDB();
 
 app.use(express.json());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://twitterclone-abu1osama.vercel.app",
+];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Enable cookies and other credentials
+  })
+);
 
+const tweetimage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Set the destination directory for avatars
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
+  },
+});
 
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://twitterclone-abu1osama.vercel.app",
-  ],
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, 
-};
+const upload = multer({ storage: tweetimage });
 
-app.use(cors(corsOptions));
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "avatars/"); // Set the destination directory for avatars
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Unsupported file format"));
+    }
+  },
+});
 
+const uploadAvatar = multer({ storage: avatarStorage });
+
+// Handle WebSocket connections
 io.on("connection", (socket) => {
   console.log("A user connected");
 
@@ -43,10 +79,7 @@ io.on("connection", (socket) => {
   // Handle chat messages
   socket.on("chatMessage", async (message) => {
     try {
-      // Save the message to the database
-      const savedMessage = await Message.create(message);
-
-      // Broadcast the message to all connected clients (including the sender)
+      const savedMessage = await Message.create(message); 
       io.emit("chatMessage", savedMessage);
     } catch (error) {
       console.error("Error saving message:", error);
