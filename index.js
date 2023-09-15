@@ -12,6 +12,7 @@ const io = require("socket.io")(httpServer, {
     origin: [
       "http://localhost:3000",
       "https://twitterclone-abu1osama.vercel.app",
+      "*"
     ],
     methods: ["GET", "POST"],
     credentials: true,
