@@ -38,16 +38,16 @@ app.use(
   cors({
     origin: allowedOrigins,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // Enable cookies and other credentials
+    credentials: true, 
   })
 );
 
 const tweetimage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Set the destination directory for avatars
+    cb(null, "uploads/"); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); // Generate a unique filename
+    cb(null, Date.now() + "-" + file.originalname); 
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
@@ -79,6 +79,26 @@ const avatarStorage = multer.diskStorage({
 const uploadAvatar = multer({ storage: avatarStorage });
 
 // Handle WebSocket connections
+// io.on("connection", (socket) => {
+//   console.log("A user connected");
+
+//   socket.on("disconnect", () => {
+//     console.log("A user disconnected");
+//   });
+
+//   // Handle chat messages
+//   socket.on("chatMessage", async (message) => {
+//     try {
+//       const savedMessage = await Message.create(message); 
+//       io.emit("chatMessage", savedMessage);
+//       console.log(savedMessage)
+//     } catch (error) {
+//       console.error("Error saving message:", error);
+//     }
+//   });
+// });
+
+// Server-side code
 io.on("connection", (socket) => {
   console.log("A user connected");
 
@@ -86,18 +106,23 @@ io.on("connection", (socket) => {
     console.log("A user disconnected");
   });
 
-  // Handle chat messages
-  socket.on("chatMessage", async (message) => {
+  socket.on("privateMessage", async (message) => {
     try {
-      const savedMessage = await Message.create(message); 
-      io.emit("chatMessage", savedMessage);
+
+      const roomName = message.roomName;
+
+      socket.join(roomName);
+
+      const savedMessage = await Message.create(message);
+
+      io.to(roomName).emit("privateMessage", savedMessage);
     } catch (error) {
-      console.error("Error saving message:", error);
+      console.error("Error sending private message:", error);
     }
   });
 });
 
-// Use the upload middleware for handling image uploads
+
 app.use("/avatars", express.static(path.join(__dirname, "avatars/")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads/")));
 app.use("/auth", authRoutes);
