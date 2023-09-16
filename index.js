@@ -79,26 +79,6 @@ const avatarStorage = multer.diskStorage({
 const uploadAvatar = multer({ storage: avatarStorage });
 
 // Handle WebSocket connections
-// io.on("connection", (socket) => {
-//   console.log("A user connected");
-
-//   socket.on("disconnect", () => {
-//     console.log("A user disconnected");
-//   });
-
-//   // Handle chat messages
-//   socket.on("chatMessage", async (message) => {
-//     try {
-//       const savedMessage = await Message.create(message); 
-//       io.emit("chatMessage", savedMessage);
-//       console.log(savedMessage)
-//     } catch (error) {
-//       console.error("Error saving message:", error);
-//     }
-//   });
-// });
-
-// Server-side code
 io.on("connection", (socket) => {
   console.log("A user connected");
 
@@ -106,21 +86,41 @@ io.on("connection", (socket) => {
     console.log("A user disconnected");
   });
 
-  socket.on("privateMessage", async (message) => {
+  // Handle chat messages
+  socket.on("chatMessage", async (message) => {
     try {
-
-      const roomName = message.roomName;
-
-      socket.join(roomName);
-
-      const savedMessage = await Message.create(message);
-
-      io.to(roomName).emit("privateMessage", savedMessage);
+      const savedMessage = await Message.create(message); 
+      io.emit("chatMessage", savedMessage);
+      console.log(savedMessage)
     } catch (error) {
-      console.error("Error sending private message:", error);
+      console.error("Error saving message:", error);
     }
   });
 });
+
+// Server-side code
+// io.on("connection", (socket) => {
+//   console.log("A user connected");
+
+//   socket.on("disconnect", () => {
+//     console.log("A user disconnected");
+//   });
+
+//   socket.on("privateMessage", async (message) => {
+//     try {
+
+//       const roomName = message.roomName;
+
+//       socket.join(roomName);
+
+//       const savedMessage = await Message.create(message);
+
+//       io.to(roomName).emit("privateMessage", savedMessage);
+//     } catch (error) {
+//       console.error("Error sending private message:", error);
+//     }
+//   });
+// });
 
 
 app.use("/avatars", express.static(path.join(__dirname, "avatars/")));

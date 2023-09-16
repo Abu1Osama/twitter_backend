@@ -5,7 +5,7 @@ const messageSchema = new mongoose.Schema({
   recipient: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   content: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
-  roomName: { type: String, required: true },
+  // roomName: { type: String, required: true },
 });
 
 module.exports = mongoose.model("Message", messageSchema);
